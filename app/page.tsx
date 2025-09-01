@@ -346,9 +346,11 @@ const ProjectCard: React.FC<{ project: WorkProject; index: number }> = ({ projec
         <div className="mb-4 flex items-start justify-between">
           <div className="flex-1">
             <CategoryBadge category={project.category} />
-            <h4 className="mt-3 text-xl font-bold text-white transition-colors group-hover:text-cyan-400">
-              {project.title}
-            </h4>
+            <Link href={`/projects/${project.id}`} className="group/title">
+              <h4 className="mt-3 text-xl font-bold text-white transition-colors group-hover/title:text-cyan-400 group-hover:text-cyan-400">
+                {project.title}
+              </h4>
+            </Link>
             {project.company && (
               <p className="text-sm text-gray-400">
                 {project.company} • {project.timeframe}
@@ -378,8 +380,17 @@ const ProjectCard: React.FC<{ project: WorkProject; index: number }> = ({ projec
         {/* Key highlights */}
         <HighlightsList highlights={project.highlights} />
         
-        {/* Action buttons */}
-        <ProjectActions links={project.links} />
+        {/* Action buttons - Updated to include View Details */}
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/projects/${project.id}`}
+            className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 px-3 py-1 text-xs font-medium text-black transition-all duration-300 hover:scale-105"
+          >
+            <span>📖</span>
+            <span>View Details</span>
+          </Link>
+          <ProjectActions links={project.links} />
+        </div>
       </div>
     </article>
   )
@@ -958,29 +969,41 @@ const Home: React.FC = () => {
               <div className="relative rounded-2xl border border-white/10 bg-slate-800/50 p-8 backdrop-blur-sm">
                 <div className="grid items-center gap-8 md:grid-cols-2">
                   <div>
-                    <h4 className="mb-4 text-3xl font-bold">La Vieja Adventures</h4>
+                    <h4 className="mb-4 text-3xl font-bold">Microservices Event Hub</h4>
                     <p className="mb-6 leading-relaxed text-gray-300">
-                      My main website showcasing adventure experiences and travel content. Built with modern web technologies
-                      and optimized for performance, featuring responsive design and engaging user interactions.
+                      Scalable event-driven architecture processing 500K+ daily real-time events. 
+                      Built a comprehensive platform that revolutionized microservices communication with 
+                      99.95% uptime and fault-tolerant message processing.
                     </p>
                     <div className="mb-6 flex flex-wrap gap-3">
-                      <span className="rounded-full border border-cyan-500/30 bg-cyan-500/20 px-4 py-2 text-sm font-medium text-cyan-300">Live Site</span>
-                      <span className="rounded-full border border-purple-500/30 bg-purple-500/20 px-4 py-2 text-sm font-medium text-purple-300">Featured</span>
-                      <span className="rounded-full border border-green-500/30 bg-green-500/20 px-4 py-2 text-sm font-medium text-green-300">Travel</span>
+                      <span className="rounded-full border border-yellow-500/30 bg-yellow-500/20 px-4 py-2 text-sm font-medium text-yellow-300">⭐ Featured</span>
+                      <span className="rounded-full border border-blue-500/30 bg-blue-500/20 px-4 py-2 text-sm font-medium text-blue-300">Enterprise</span>
+                      <span className="rounded-full border border-green-500/30 bg-green-500/20 px-4 py-2 text-sm font-medium text-green-300">🔄 Ongoing</span>
                     </div>
-                    <Link
-                      href="https://laviejadventures.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-4 font-medium text-black transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25"
-                    >
-                      <span>Visit Website</span>
-                      <span aria-hidden className="transition-transform duration-300 group-hover:rotate-12">🔗</span>
-                    </Link>
+                    <div className="flex gap-4">
+                      <Link
+                        href="/projects/enterprise-event-hub"
+                        className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-8 py-4 font-medium text-black transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25"
+                      >
+                        <span>View Project</span>
+                        <span aria-hidden className="transition-transform duration-300 group-hover:rotate-12">📖</span>
+                      </Link>
+                      <Link
+                        href="/projects"
+                        className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-8 py-4 font-medium text-white transition-all duration-300 hover:bg-white/20 hover:scale-105"
+                      >
+                        <span>All Projects</span>
+                        <span aria-hidden>🗂️</span>
+                      </Link>
+                    </div>
                   </div>
                   <div className="relative">
                     <div className="flex aspect-video items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-slate-800 to-slate-900">
-                      <span className="text-6xl opacity-50">🌟</span>
+                      <div className="text-center">
+                        <div className="text-6xl opacity-50 mb-2">⚡</div>
+                        <div className="text-lg font-medium text-cyan-300">Event-Driven Architecture</div>
+                        <div className="text-sm text-gray-400 mt-2">500K+ Events/Day</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1106,6 +1129,17 @@ const Home: React.FC = () => {
                 </div>
               )}
             </div>
+            
+            {/* View All Projects Link */}
+            <div className="mt-8 text-center">
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25"
+              >
+                <span>📁</span>
+                <span>View All Projects</span>
+              </Link>
+            </div>
           </section>
 
           {/* GitHub Projects */}
@@ -1126,9 +1160,11 @@ const Home: React.FC = () => {
                   <div className="mb-4 flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">📁</span>
-                      <h4 className="text-lg font-semibold text-white transition-colors group-hover:text-cyan-400">
-                        {repo.name}
-                      </h4>
+                      <Link href={`/projects/${repo.name}`} className="group/title">
+                        <h4 className="text-lg font-semibold text-white transition-colors group-hover/title:text-cyan-400 group-hover:text-cyan-400">
+                          {repo.name}
+                        </h4>
+                      </Link>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-300">
                       <span aria-hidden>⭐</span>
@@ -1150,18 +1186,38 @@ const Home: React.FC = () => {
                       <div className={classNames('h-3 w-3 rounded-full', getLanguageColor(repo.language))} />
                       <span className="text-sm text-gray-300">{repo.language}</span>
                     </div>
-                    <Link
-                      href={repo.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/link rounded-lg p-2 text-cyan-400 transition-colors hover:bg-white/10 hover:text-cyan-300"
-                      aria-label={`Open ${repo.name} on GitHub`}
-                    >
-                      <span className="inline-block text-lg transition-transform group-hover/link:scale-110">🔗</span>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/projects/${repo.name}`}
+                        className="group/link rounded-lg p-2 text-purple-400 transition-colors hover:bg-white/10 hover:text-purple-300"
+                        aria-label={`View ${repo.name} project details`}
+                      >
+                        <span className="inline-block text-lg transition-transform group-hover/link:scale-110">📖</span>
+                      </Link>
+                      <Link
+                        href={repo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group/link rounded-lg p-2 text-cyan-400 transition-colors hover:bg-white/10 hover:text-cyan-300"
+                        aria-label={`Open ${repo.name} on GitHub`}
+                      >
+                        <span className="inline-block text-lg transition-transform group-hover/link:scale-110">🔗</span>
+                      </Link>
+                    </div>
                   </div>
                 </article>
               ))}
+            </div>
+            
+            {/* View All Projects Link */}
+            <div className="mt-8 text-center">
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 px-6 py-3 font-medium text-black transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25"
+              >
+                <span>📊</span>
+                <span>View All Projects</span>
+              </Link>
             </div>
           </section>
 
