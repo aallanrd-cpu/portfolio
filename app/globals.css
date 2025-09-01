@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Custom Text Contrast Utilities for Dark Backgrounds */
+@layer utilities {
+  /* High contrast text for dark backgrounds - pure white */
+  .text-high-contrast {
+    @apply text-white;
+  }
+  
+  /* Readable text with optimal contrast for dark themes - bright white */
+  .text-readable {
+    @apply text-white;
+  }
+  
+  /* Accessible text meeting WCAG AA standards - pure white for maximum contrast */
+  .text-accessible {
+    @apply text-white;
+    color: rgb(255 255 255); /* Ensures maximum contrast ratio on dark backgrounds */
+  }
+  
+  /* Enhanced text for better visibility with subtle glow */
+  .text-enhanced {
+    @apply text-white;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Interactive text with hover effects */
+  .text-interactive {
+    @apply text-white transition-colors duration-300;
+  }
+  
+  .text-interactive:hover {
+    @apply text-cyan-300;
+  }
+  
+  /* Subtle text for secondary information */
+  .text-subtle {
+    @apply text-gray-300;
+  }
+  
+  /* Accent text colors for highlights */
+  .text-accent-cyan {
+    @apply text-cyan-400;
+  }
+  
+  .text-accent-purple {
+    @apply text-purple-400;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom color overrides for better contrast on dark themes */
+@layer components {
+  .contact-info {
+    @apply text-white;
+  }
+  
+  .content-text {
+    @apply text-white;
+  }
+  
+  .meta-text {
+    @apply text-gray-300;
+  }
+  
+  /* Card components with proper contrast */
+  .card-text {
+    @apply text-white;
+  }
+  
+  .card-description {
+    @apply text-gray-100;
+  }
+  
+  .card-meta {
+    @apply text-gray-400;
+  }
+  
+  /* Button text overrides */
+  .btn-text {
+    @apply text-white;
+  }
+  
+  /* Heading overrides for consistency */
+  .heading-primary {
+    @apply text-white;
+  }
+  
+  .heading-secondary {
+    @apply text-gray-100;
+  }
 }
