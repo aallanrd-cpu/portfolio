@@ -31,6 +31,60 @@ interface Skill {
   description: string
 }
 
+interface ProjectMetrics {
+  performance?: string
+  scale?: string
+  uptime?: string
+  adoption?: string
+  latency?: string
+  reliability?: string
+  efficiency?: string
+  compliance?: string
+}
+
+interface ProjectLinks {
+  live?: string
+  documentation?: string
+  demo?: string
+  github?: string
+}
+
+interface ProjectImage {
+  src: string
+  alt: string
+  caption?: string
+}
+
+interface Testimonial {
+  text: string
+  author: string
+  role: string
+  company: string
+}
+
+interface WorkProject {
+  id: string
+  title: string
+  category: 'enterprise' | 'cloud-infrastructure' | 'api-development' | 'full-stack' | 'devops'
+  description: string
+  longDescription: string
+  technologies: string[]
+  highlights: string[]
+  metrics?: ProjectMetrics
+  timeframe: string
+  company?: string
+  status: 'completed' | 'ongoing' | 'maintained'
+  links?: ProjectLinks
+  images?: ProjectImage[]
+  testimonial?: Testimonial
+}
+
+interface ProjectFilter {
+  category: string[]
+  technology: string[]
+  company: string[]
+}
+
 /**
  * Lightweight animated particles using <canvas> (no external deps)
  * - Parallax reacts to scroll
@@ -142,9 +196,203 @@ function classNames(...xs: (string | false | null | undefined)[]) {
   return xs.filter(Boolean).join(' ')
 }
 
+// Helper function to get category display info
+function getCategoryInfo(category: WorkProject['category']) {
+  const categoryMap = {
+    'enterprise': { label: 'Enterprise', icon: '🏢', color: 'from-blue-500 to-cyan-500' },
+    'cloud-infrastructure': { label: 'Cloud Infrastructure', icon: '☁️', color: 'from-purple-500 to-pink-500' },
+    'api-development': { label: 'API Development', icon: '🔌', color: 'from-green-500 to-emerald-500' },
+    'full-stack': { label: 'Full Stack', icon: '💻', color: 'from-orange-500 to-red-500' },
+    'devops': { label: 'DevOps', icon: '🔧', color: 'from-yellow-500 to-orange-500' }
+  }
+  return categoryMap[category]
+}
+
+// CategoryBadge Component
+const CategoryBadge: React.FC<{ category: WorkProject['category'] }> = ({ category }) => {
+  const categoryInfo = getCategoryInfo(category)
+  return (
+    <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-gradient-to-r ${categoryInfo.color} text-white`}>
+      <span>{categoryInfo.icon}</span>
+      <span>{categoryInfo.label}</span>
+    </div>
+  )
+}
+
+// MetricsDisplay Component
+const MetricsDisplay: React.FC<{ metrics: ProjectMetrics }> = ({ metrics }) => {
+  const metricEntries = Object.entries(metrics).filter(([_, value]) => value)
+  
+  if (metricEntries.length === 0) return null
+  
+  return (
+    <div className="mb-4">
+      <h5 className="mb-2 text-sm font-semibold text-white">Key Metrics</h5>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {metricEntries.map(([key, value]) => (
+          <div key={key} className="rounded-lg bg-white/5 px-3 py-2 backdrop-blur-sm">
+            <div className="text-xs text-gray-400 capitalize">{key}</div>
+            <div className="text-sm font-medium text-cyan-300">{value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// TechnologyTags Component
+const TechnologyTags: React.FC<{ technologies: string[] }> = ({ technologies }) => {
+  return (
+    <div className="mb-4">
+      <h5 className="mb-2 text-sm font-semibold text-white">Technologies</h5>
+      <div className="flex flex-wrap gap-2">
+        {technologies.map((tech) => (
+          <span
+            key={tech}
+            className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-xs font-medium text-cyan-300"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// HighlightsList Component
+const HighlightsList: React.FC<{ highlights: string[] }> = ({ highlights }) => {
+  return (
+    <div className="mb-4">
+      <h5 className="mb-2 text-sm font-semibold text-white">Key Achievements</h5>
+      <ul className="space-y-1">
+        {highlights.map((highlight, index) => (
+          <li key={index} className="flex items-start gap-2 text-sm text-gray-300">
+            <span className="mt-1 text-cyan-400">▸</span>
+            <span>{highlight}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// ProjectActions Component
+const ProjectActions: React.FC<{ links?: ProjectLinks }> = ({ links }) => {
+  if (!links || Object.keys(links).length === 0) return null
+  
+  return (
+    <div className="flex flex-wrap gap-2">
+      {links.live && (
+        <Link
+          href={links.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 px-3 py-1 text-xs font-medium text-black transition-all duration-300 hover:scale-105"
+        >
+          <span>🔗</span>
+          <span>Live Demo</span>
+        </Link>
+      )}
+      {links.documentation && (
+        <Link
+          href={links.documentation}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 rounded-lg border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white transition-all duration-300 hover:bg-white/20"
+        >
+          <span>📚</span>
+          <span>Docs</span>
+        </Link>
+      )}
+      {links.demo && (
+        <Link
+          href={links.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 transition-all duration-300 hover:bg-purple-500/20"
+        >
+          <span>🎯</span>
+          <span>Demo</span>
+        </Link>
+      )}
+      {links.github && (
+        <Link
+          href={links.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 rounded-lg border border-gray-500/30 bg-gray-500/10 px-3 py-1 text-xs font-medium text-gray-300 transition-all duration-300 hover:bg-gray-500/20"
+        >
+          <span>📁</span>
+          <span>GitHub</span>
+        </Link>
+      )}
+    </div>
+  )
+}
+
+// ProjectCard Component
+const ProjectCard: React.FC<{ project: WorkProject; index: number }> = ({ project, index }) => {
+  return (
+    <article 
+      className="group relative"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      {/* Gradient border effect */}
+      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 blur transition duration-700 group-hover:opacity-100" />
+      
+      {/* Card content */}
+      <div className="relative rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/10">
+        {/* Header */}
+        <div className="mb-4 flex items-start justify-between">
+          <div className="flex-1">
+            <CategoryBadge category={project.category} />
+            <h4 className="mt-3 text-xl font-bold text-white transition-colors group-hover:text-cyan-400">
+              {project.title}
+            </h4>
+            {project.company && (
+              <p className="text-sm text-gray-400">
+                {project.company} • {project.timeframe}
+              </p>
+            )}
+          </div>
+          <div className={`rounded-full px-2 py-1 text-xs font-medium ${
+            project.status === 'ongoing' ? 'bg-green-500/20 text-green-300' :
+            project.status === 'maintained' ? 'bg-blue-500/20 text-blue-300' :
+            'bg-gray-500/20 text-gray-300'
+          }`}>
+            {project.status === 'ongoing' ? '🔄 Ongoing' :
+             project.status === 'maintained' ? '🔧 Maintained' :
+             '✅ Completed'}
+          </div>
+        </div>
+        
+        {/* Description */}
+        <p className="mb-4 text-gray-300">{project.description}</p>
+        
+        {/* Metrics */}
+        {project.metrics && <MetricsDisplay metrics={project.metrics} />}
+        
+        {/* Technology tags */}
+        <TechnologyTags technologies={project.technologies} />
+        
+        {/* Key highlights */}
+        <HighlightsList highlights={project.highlights} />
+        
+        {/* Action buttons */}
+        <ProjectActions links={project.links} />
+      </div>
+    </article>
+  )
+}
+
 const Home: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [activeSection, setActiveSection] = useState('about')
+  const [projectFilter, setProjectFilter] = useState<ProjectFilter>({
+    category: [],
+    technology: [],
+    company: []
+  })
 
   useEffect(() => {
     setIsLoaded(true)
@@ -152,7 +400,7 @@ const Home: React.FC = () => {
 
   // Observe sections to update active nav item when scrolling
   useEffect(() => {
-    const ids = ['about', 'experience', 'projects', 'skills', 'contact']
+    const ids = ['about', 'experience', 'featured-project', 'work-projects', 'github-projects', 'skills', 'contact']
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -212,6 +460,135 @@ const Home: React.FC = () => {
         'Developed data pipelines analyzing machine output metrics',
       ],
     },
+  ]
+
+  const workProjects: WorkProject[] = [
+    {
+      id: 'enterprise-event-hub',
+      title: 'Microservices Event Hub',
+      category: 'enterprise',
+      description: 'Scalable event-driven architecture processing 500K+ daily real-time events',
+      longDescription: 'Built a comprehensive event-driven architecture platform that revolutionized how our microservices communicate. The system handles massive throughput while maintaining reliability and providing comprehensive monitoring and alerting capabilities.',
+      technologies: ['Kafka', 'Node.js', 'Python', 'Docker', 'Kubernetes', 'AWS'],
+      highlights: [
+        'Reduced system coupling by 70% through event-driven design',
+        'Implemented fault-tolerant message processing with dead letter queues',
+        'Built comprehensive monitoring and alerting dashboard',
+        'Achieved 99.95% uptime across all event processing pipelines'
+      ],
+      metrics: {
+        performance: '99.95% uptime',
+        scale: '500K+ events/day',
+        latency: '<50ms processing time'
+      },
+      timeframe: '2022-2024',
+      company: 'Wind River (Kaptyn)',
+      status: 'ongoing',
+      links: {
+        documentation: 'https://docs.internal.windriver.com/event-hub'
+      }
+    },
+    {
+      id: 'multi-cloud-infrastructure',
+      title: 'Terraform Cloud Orchestrator',
+      category: 'cloud-infrastructure',
+      description: 'Infrastructure as Code solution managing AWS, GCP, and Azure environments',
+      longDescription: 'Designed and implemented a comprehensive multi-cloud infrastructure automation platform using Terraform. The solution standardizes deployments across cloud providers while enabling blue-green deployment strategies and self-healing infrastructure.',
+      technologies: ['Terraform', 'AWS', 'GCP', 'Azure', 'GitLab CI/CD', 'Ansible'],
+      highlights: [
+        'Standardized infrastructure patterns across cloud providers',
+        'Implemented blue-green deployment strategies',
+        'Created self-healing infrastructure with auto-scaling',
+        'Reduced infrastructure provisioning time by 80%'
+      ],
+      metrics: {
+        performance: '60% faster deployments',
+        scale: '100+ environment configs',
+        reliability: 'Zero-downtime deployments'
+      },
+      timeframe: '2023-2024',
+      company: 'Wind River (Kaptyn)',
+      status: 'maintained',
+      links: {
+        documentation: 'https://github.com/allanrojasd/cloud-infrastructure-terraform'
+      }
+    },
+    {
+      id: 'graphql-api-gateway',
+      title: 'Unified API Gateway',
+      category: 'api-development',
+      description: 'High-performance GraphQL gateway with real-time analytics and monitoring',
+      longDescription: 'Built a sophisticated GraphQL API gateway that federates schemas across 15+ microservices. The platform includes intelligent caching, comprehensive analytics, and real-time monitoring capabilities that significantly improved API performance and developer experience.',
+      technologies: ['GraphQL', 'Apollo Server', 'Node.js', 'PostgreSQL', 'Redis', 'DataDog'],
+      highlights: [
+        'Built type-safe schema federation across 15+ microservices',
+        'Implemented intelligent caching strategies',
+        'Created comprehensive API analytics dashboard',
+        'Achieved 40% reduction in bandwidth usage'
+      ],
+      metrics: {
+        performance: '10x faster than REST equivalent',
+        scale: '1M+ requests/day',
+        efficiency: '40% reduced bandwidth usage'
+      },
+      timeframe: '2023-Present',
+      company: 'Wind River (Kaptyn)',
+      status: 'ongoing',
+      links: {
+        demo: 'https://api-gateway-demo.windriver.com',
+        documentation: 'https://docs.windriver.com/api-gateway'
+      }
+    },
+    {
+      id: 'luxury-ride-hailing',
+      title: 'Premium Transport Platform',
+      category: 'full-stack',
+      description: 'Real-time ride-hailing application with advanced booking and tracking features',
+      longDescription: 'Developed a comprehensive luxury ride-hailing mobile application featuring real-time GPS tracking, sophisticated driver-passenger matching algorithms, and integrated payment processing. The platform serves high-end clients with premium transportation needs.',
+      technologies: ['React Native', 'Node.js', 'WebSockets', 'PostgreSQL', 'Google Maps API', 'Stripe'],
+      highlights: [
+        'Implemented real-time GPS tracking with WebSocket communication',
+        'Built sophisticated matching algorithm for drivers and passengers',
+        'Integrated payment processing with fraud detection',
+        'Achieved 99.9% location accuracy for all rides'
+      ],
+      metrics: {
+        performance: 'Sub-2s booking confirmation',
+        scale: '10K+ active users',
+        reliability: '99.9% location accuracy'
+      },
+      timeframe: '2021-2022',
+      company: 'Costa Rica Software Services',
+      status: 'completed',
+      links: {
+        demo: 'https://luxury-rides-demo.com'
+      }
+    },
+    {
+      id: 'medical-manufacturing-analytics',
+      title: 'Manufacturing Intelligence Platform',
+      category: 'devops',
+      description: 'Real-time production analytics and quality assurance system for medical devices',
+      longDescription: 'Architected and built a comprehensive manufacturing intelligence platform for medical device production. The system provides real-time quality monitoring, regulatory compliance tracking, and predictive maintenance capabilities that significantly improved production efficiency.',
+      technologies: ['Java', 'Spring Boot', 'Python', 'Apache Spark', 'InfluxDB', 'Grafana'],
+      highlights: [
+        'Built real-time quality monitoring preventing 95% of defects',
+        'Implemented traceability system for regulatory compliance',
+        'Created predictive maintenance algorithms reducing downtime by 30%',
+        'Achieved FDA 21 CFR Part 11 compliance for all data systems'
+      ],
+      metrics: {
+        performance: 'Real-time data processing',
+        scale: '100+ production lines',
+        compliance: 'FDA 21 CFR Part 11 compliant'
+      },
+      timeframe: '2018-2020',
+      company: 'MicroVention-Terumo',
+      status: 'completed',
+      links: {
+        documentation: 'https://internal-docs.microvention.com/manufacturing-intelligence'
+      }
+    }
   ]
 
   const githubRepos: GitHubRepo[] = [
@@ -306,7 +683,9 @@ const Home: React.FC = () => {
   const sections = [
     { id: 'about', label: 'About', icon: '👤' },
     { id: 'experience', label: 'Experience', icon: '💼' },
-    { id: 'projects', label: 'Projects', icon: '🚀' },
+    { id: 'featured-project', label: 'Featured', icon: '⭐' },
+    { id: 'work-projects', label: 'Work Projects', icon: '🏢' },
+    { id: 'github-projects', label: 'Open Source', icon: '🚀' },
     { id: 'skills', label: 'Skills', icon: '🛠️' },
     { id: 'contact', label: 'Contact', icon: '📧' },
   ]
@@ -315,6 +694,35 @@ const Home: React.FC = () => {
     const el = document.getElementById(id)
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  // Filter functions for work projects
+  const toggleFilter = (type: keyof ProjectFilter, value: string) => {
+    setProjectFilter(prev => {
+      const currentValues = prev[type]
+      const newValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value]
+      return { ...prev, [type]: newValues }
+    })
+  }
+
+  const clearAllFilters = () => {
+    setProjectFilter({ category: [], technology: [], company: [] })
+  }
+
+  const filteredWorkProjects = workProjects.filter(project => {
+    const categoryMatch = projectFilter.category.length === 0 || projectFilter.category.includes(project.category)
+    const technologyMatch = projectFilter.technology.length === 0 || project.technologies.some(tech => projectFilter.technology.includes(tech))
+    const companyMatch = projectFilter.company.length === 0 || (project.company && projectFilter.company.includes(project.company))
+    return categoryMatch && technologyMatch && companyMatch
+  })
+
+  // Get unique values for filter options
+  const filterOptions = {
+    categories: Array.from(new Set(workProjects.map(p => p.category))),
+    technologies: Array.from(new Set(workProjects.flatMap(p => p.technologies))).slice(0, 8), // Limit to most common
+    companies: Array.from(new Set(workProjects.map(p => p.company).filter(Boolean)))
   }
 
   return (
@@ -540,7 +948,7 @@ const Home: React.FC = () => {
           </section>
 
           {/* Featured Project */}
-          <section id="projects" className="py-16">
+          <section id="featured-project" className="py-16">
             <div className="mb-12 text-center">
               <h3 className="mb-4 text-3xl font-bold">Featured Project</h3>
               <div className="mx-auto h-1 w-20 bg-gradient-to-r from-cyan-400 to-purple-400" />
@@ -580,11 +988,134 @@ const Home: React.FC = () => {
             </div>
           </section>
 
-          {/* GitHub Projects */}
-          <section className="py-16">
+          {/* Work Projects */}
+          <section id="work-projects" className="py-16">
             <div className="mb-12 text-center">
-              <h3 className="mb-4 text-3xl font-bold">GitHub Projects</h3>
+              <h3 className="mb-4 text-3xl font-bold">Professional Work Projects</h3>
               <div className="mx-auto h-1 w-20 bg-gradient-to-r from-cyan-400 to-purple-400" />
+              <p className="mt-4 text-lg text-gray-300">
+                Enterprise-level projects showcasing scalable solutions and technical excellence
+              </p>
+            </div>
+
+            {/* Filter System */}
+            <div className="mb-8">
+              <div className="mb-4 flex flex-wrap items-center gap-4">
+                <h4 className="text-lg font-semibold text-white">Filter by:</h4>
+                <button
+                  onClick={clearAllFilters}
+                  className="rounded-lg border border-gray-500/30 bg-gray-500/10 px-3 py-1 text-sm font-medium text-gray-300 transition-all duration-300 hover:bg-gray-500/20"
+                >
+                  Clear All
+                </button>
+              </div>
+              
+              {/* Category Filters */}
+              <div className="mb-4">
+                <h5 className="mb-2 text-sm font-medium text-gray-400">Category</h5>
+                <div className="flex flex-wrap gap-2">
+                  {filterOptions.categories.map(category => {
+                    const isActive = projectFilter.category.includes(category)
+                    const categoryInfo = getCategoryInfo(category)
+                    return (
+                      <button
+                        key={category}
+                        onClick={() => toggleFilter('category', category)}
+                        className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                          isActive
+                            ? `bg-gradient-to-r ${categoryInfo.color} text-white scale-105`
+                            : 'border border-white/20 bg-white/5 text-gray-300 hover:bg-white/10'
+                        }`}
+                        aria-pressed={isActive}
+                      >
+                        <span>{categoryInfo.icon}</span>
+                        <span>{categoryInfo.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              
+              {/* Technology Filters */}
+              <div className="mb-4">
+                <h5 className="mb-2 text-sm font-medium text-gray-400">Technology</h5>
+                <div className="flex flex-wrap gap-2">
+                  {filterOptions.technologies.map(tech => {
+                    const isActive = projectFilter.technology.includes(tech)
+                    return (
+                      <button
+                        key={tech}
+                        onClick={() => toggleFilter('technology', tech)}
+                        className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                          isActive
+                            ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white scale-105'
+                            : 'border border-white/20 bg-white/5 text-gray-300 hover:bg-white/10'
+                        }`}
+                        aria-pressed={isActive}
+                      >
+                        {tech}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              
+              {/* Company Filters */}
+              <div className="mb-4">
+                <h5 className="mb-2 text-sm font-medium text-gray-400">Company</h5>
+                <div className="flex flex-wrap gap-2">
+                  {filterOptions.companies.map(company => {
+                    const isActive = projectFilter.company.includes(company!)
+                    return (
+                      <button
+                        key={company}
+                        onClick={() => toggleFilter('company', company!)}
+                        className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                          isActive
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white scale-105'
+                            : 'border border-white/20 bg-white/5 text-gray-300 hover:bg-white/10'
+                        }`}
+                        aria-pressed={isActive}
+                      >
+                        {company}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Projects Grid */}
+            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {filteredWorkProjects.length > 0 ? (
+                filteredWorkProjects.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} index={index} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <div className="text-6xl opacity-50 mb-4">🔍</div>
+                  <h4 className="text-xl font-semibold text-white mb-2">No projects found</h4>
+                  <p className="text-gray-400 mb-4">Try adjusting your filters to see more projects.</p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-500 px-4 py-2 font-medium text-black transition-all duration-300 hover:scale-105"
+                  >
+                    <span>🔄</span>
+                    <span>Clear Filters</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* GitHub Projects */}
+          <section id="github-projects" className="py-16">
+            <div className="mb-12 text-center">
+              <h3 className="mb-4 text-3xl font-bold">Open Source Projects</h3>
+              <div className="mx-auto h-1 w-20 bg-gradient-to-r from-cyan-400 to-purple-400" />
+              <p className="mt-4 text-lg text-gray-300">
+                Community contributions and personal projects on GitHub
+              </p>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {githubRepos.map((repo) => (
