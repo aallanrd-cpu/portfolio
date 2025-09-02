@@ -804,8 +804,15 @@ const Home: React.FC = () => {
             <div className="text-center">
               <div className="relative inline-block mb-8">
                 <div className="mx-auto h-32 w-32 rounded-full bg-gradient-to-r from-cyan-400 to-purple-400 p-1">
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-900 text-4xl font-bold">
-                    AR
+                  <div className="relative h-full w-full rounded-full overflow-hidden">
+                    <Image
+                      src="/Gemini_Generated_Image_vv0xjdvv0xjdvv0x.png"
+                      alt="Allan Rojas D. - Senior Cloud & Full Stack Engineer"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="128px"
+                    />
                   </div>
                 </div>
                 <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full border-4 border-slate-900 bg-green-500">
